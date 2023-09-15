@@ -14,6 +14,10 @@ const books = [
   },
 ];
 
+function searchBook(id) {
+  return books.findIndex((book) => book.id === id);
+}
+
 app.get("/", (req, res) => {
   res.status(200).send("Hello World!!!");
 });
@@ -26,6 +30,16 @@ app.post("/books", (req, res) => {
   books.push(req.body);
   //res.status(201).json(books);
   res.status(201).json("Livro Cadastrado com Sucesso!!!");
+});
+
+app.get("/books/:id", (req, res) => {
+  const index = searchBook(Number(req.params.id));
+
+  if (index === -1) {
+    res.status(404).json("Livro não encontrado");
+  } else {
+    res.status(200).json(books[index]);
+  }
 });
 
 export default app;
