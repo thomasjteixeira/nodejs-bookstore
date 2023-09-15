@@ -1,18 +1,8 @@
-// biblioteca nativa do node
-import http from "http";
-
-const routes = {
-  "/": "Hello World!!!",
-  "/books": "Rotas Livros",
-  "/authors": "Rotas Autores",
-};
+import app from "./src/app.js";
 
 const PORT = 3000;
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end(routes[req.url] || "Not Found");
-});
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log("Servidor rodando na porta 3000");
 });
+
