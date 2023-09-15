@@ -12,6 +12,10 @@ const books = [
     id: 2,
     title: "Senhor dos Anéis",
   },
+  {
+    id: 3,
+    title: "As Crônicas de Gelo e Fogo",
+  },
 ];
 
 // Função para buscar o livro pelo id
@@ -50,6 +54,17 @@ app.patch("/books/:id", (req, res) => {
   } else {
     books[index].title = req.body.title;
     res.status(200).json(books);
+  }
+});
+
+app.delete("/books/:id", (req, res) => {
+  const index = searchBook(Number(req.params.id));
+  if (index === -1) {
+    res.status(404).json("Livro não encontrado");
+  } else {
+    books.splice(index, 1);
+    //res.status(200).json(books);
+    res.status(200).json("Livro removido com sucesso!!!");
   }
 });
 
