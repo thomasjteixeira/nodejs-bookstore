@@ -1,6 +1,10 @@
 import express from "express";
 import connectDataBase from "./config/dbConnect.js";
 
+// Importa o modelo "book" do módulo "./models/book.js".
+// Este modelo permite interagir com a coleção de livros no banco de dados MongoDB.
+import book from "./models/book.js";
+
 // Chama a função "connectDataBase" para estabelecer uma conexão com o banco de dados.
 // A utilização do "await" indica que esta operação é assíncrona
 // O código espera que a conexão seja estabelecida antes de prosseguir.
@@ -48,8 +52,17 @@ app.get("/", (req, res) => {
   res.status(200).send("Hello World!!!");
 });
 
-app.get("/books", (req, res) => {
-  res.status(200).json(books);
+// Define um endpoint na rota "/books" para o método HTTP GET.
+// Quando alguém fizer uma requisição GET para "/books", este código será executado.
+app.get("/books", async (req, res) => {
+
+  // Utiliza o modelo "book" para buscar todos os livros na coleção do banco de dados.
+  // A função "find" do mongoose é usada com um objeto vazio como argumento,
+  // o que significa que ela retornará todos os documentos da coleção.
+  const booksList = await book.find({});
+
+  // Envia uma resposta com o status HTTP 200 (OK) e o corpo da resposta contendo a lista de livros no formato JSON.
+  res.status(200).json(booksList);
 });
 
 app.post("/books", (req, res) => {
