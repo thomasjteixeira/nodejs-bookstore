@@ -55,7 +55,6 @@ app.get("/", (req, res) => {
 // Define um endpoint na rota "/books" para o método HTTP GET.
 // Quando alguém fizer uma requisição GET para "/books", este código será executado.
 app.get("/books", async (req, res) => {
-
   // Utiliza o modelo "book" para buscar todos os livros na coleção do banco de dados.
   // A função "find" do mongoose é usada com um objeto vazio como argumento,
   // o que significa que ela retornará todos os documentos da coleção.
@@ -65,10 +64,13 @@ app.get("/books", async (req, res) => {
   res.status(200).json(booksList);
 });
 
-app.post("/books", (req, res) => {
-  books.push(req.body);
-  //res.status(201).json(books);
-  res.status(201).json("Livro Cadastrado com Sucesso!!!");
+app.post("/books", async (req, res) => {
+  try {
+    const newBook = await book.create(req.body);
+    res.status(201).json({ message: "criado com sucesso", book: newBook });
+  } catch (erro) {
+    res.status(500).json({ message: `${erro.message} - falha ao cadastrar livro` });
+  }
 });
 
 app.get("/books/:id", (req, res) => {
