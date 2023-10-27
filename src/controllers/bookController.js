@@ -16,6 +16,19 @@ class BookController {
         .json({ message: `${erro.message} - falha ao listar livros` });
     }
   }
+
+  static async listBookById(req, res) {
+    try {      
+      const id = req.params.id;
+      const bookFound = await book.findById(id);
+
+      res.status(200).send(bookFound);
+    } catch (erro) {
+      res
+        .status(500)
+        .json({ message: `${erro.message} - falha ao listar um livro` });
+    }
+  }
 }
 
 export default BookController;

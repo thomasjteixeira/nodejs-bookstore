@@ -22,7 +22,6 @@ connection.once("open", () => {
 const app = express();
 routes(app);
 
-
 // Função para buscar o livro pelo id
 function searchBook(id) {
   return books.findIndex((book) => book.id === id);
@@ -31,22 +30,13 @@ function searchBook(id) {
 app.get("/", (req, res) => {
   res.status(200).send("Hello World!!!");
 });
+
 app.post("/books", async (req, res) => {
   try {
     const newBook = await book.create(req.body);
     res.status(201).json({ message: "criado com sucesso", book: newBook });
   } catch (erro) {
     res.status(500).json({ message: `${erro.message} - falha ao cadastrar livro` });
-  }
-});
-
-app.get("/books/:id", (req, res) => {
-  const index = searchBook(Number(req.params.id));
-
-  if (index === -1) {
-    res.status(404).json("Livro não encontrado");
-  } else {
-    res.status(200).json(books[index]);
   }
 });
 
