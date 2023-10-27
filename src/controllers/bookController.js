@@ -32,7 +32,7 @@ class BookController {
     try {
       const newBook = await book.create(req.body);
       res.status(201)
-        .json({ message: "criado com sucesso", book: newBook });
+        .json({ message: "Livro criado com sucesso", book: newBook });
     } catch (erro) {
       res.status(500)
         .json({ message: `${erro.message} - falha ao cadastrar livro` });
@@ -46,7 +46,7 @@ class BookController {
 
       if (updatedBook) {
         res.status(200)
-          .send({ message: "atualizado com sucesso", book: updatedBook });
+          .send({ message: "Livro atualizado com sucesso", book: updatedBook });
       } else {
         return res.status(404)
           .send({ message: "Livro não encontrado" });
@@ -54,6 +54,18 @@ class BookController {
     } catch (erro) {
       res.status(500)
         .json({ message: `${erro.message} - falha ao atualizar um livro` });
+    }
+  }
+
+  static async deleteBook(req, res) {
+    try {
+      const id = req.params.id;
+      await book.findByIdAndDelete(id);
+      res.status(200)
+        .send({ message: "Livro excluido com sucesso" });
+    } catch (erro) {
+      res.status(500)
+        .json({ message: `${erro.message} - falha ao deletar um livro` });
     }
   }
 }
