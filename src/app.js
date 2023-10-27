@@ -31,16 +31,6 @@ app.get("/", (req, res) => {
   res.status(200).send("Hello World!!!");
 });
 
-app.patch("/books/:id", (req, res) => {
-  const index = searchBook(Number(req.params.id));
-  if (index === -1) {
-    res.status(404).json("Livro não encontrado");
-  } else {
-    books[index].title = req.body.title;
-    res.status(200).json(books);
-  }
-});
-
 app.delete("/books/:id", (req, res) => {
   const index = searchBook(Number(req.params.id));
   if (index === -1) {

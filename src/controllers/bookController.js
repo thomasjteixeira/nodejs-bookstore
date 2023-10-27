@@ -11,8 +11,7 @@ class BookController {
       // Envia uma resposta com o status HTTP 200 (OK) e o corpo da resposta contendo a lista de livros no formato JSON.
       res.status(200).send(booksList);
     } catch (erro) {
-      res
-        .status(500)
+      res.status(500)
         .json({ message: `${erro.message} - falha ao listar livros` });
     }
   }
@@ -24,8 +23,7 @@ class BookController {
 
       res.status(200).send(bookFound);
     } catch (erro) {
-      res
-        .status(500)
+      res.status(500)
         .json({ message: `${erro.message} - falha ao listar um livro` });
     }
   }
@@ -33,11 +31,29 @@ class BookController {
   static async createBook(req, res) {
     try {
       const newBook = await book.create(req.body);
-      res.status(201).json({ message: "criado com sucesso", book: newBook });
+      res.status(201)
+        .json({ message: "criado com sucesso", book: newBook });
     } catch (erro) {
-      res
-        .status(500)
+      res.status(500)
         .json({ message: `${erro.message} - falha ao cadastrar livro` });
+    }
+  }
+
+  static async updateBook(req, res) {
+    try {
+      const id = req.params.id;
+      const updatedBook = await book.findByIdAndUpdate(id, req.body, { new: true, });
+
+      if (updatedBook) {
+        res.status(200)
+          .send({ message: "atualizado com sucesso", book: updatedBook });
+      } else {
+        return res.status(404)
+          .send({ message: "Livro não encontrado" });
+      }
+    } catch (erro) {
+      res.status(500)
+        .json({ message: `${erro.message} - falha ao atualizar um livro` });
     }
   }
 }
