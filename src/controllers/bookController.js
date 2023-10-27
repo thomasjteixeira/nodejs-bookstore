@@ -18,7 +18,7 @@ class BookController {
   }
 
   static async listBookById(req, res) {
-    try {      
+    try {
       const id = req.params.id;
       const bookFound = await book.findById(id);
 
@@ -27,6 +27,17 @@ class BookController {
       res
         .status(500)
         .json({ message: `${erro.message} - falha ao listar um livro` });
+    }
+  }
+
+  static async createBook(req, res) {
+    try {
+      const newBook = await book.create(req.body);
+      res.status(201).json({ message: "criado com sucesso", book: newBook });
+    } catch (erro) {
+      res
+        .status(500)
+        .json({ message: `${erro.message} - falha ao cadastrar livro` });
     }
   }
 }
