@@ -6,7 +6,7 @@ class BookController {
       /* Utiliza o modelo "book" para buscar todos os livros na coleção do banco de dados.
       A função "find" do mongoose é usada com um objeto vazio como argumento,
        o que significa que ela retornará todos os documentos da coleção.*/
-      const booksList = await book.find({});
+      const booksList = await book.find({}).populate('author');
 
       // Envia uma resposta com o status HTTP 200 (OK) e o corpo da resposta contendo a lista de livros no formato JSON.
       res.status(200).send(booksList);
@@ -19,7 +19,7 @@ class BookController {
   static async listBookById(req, res) {
     try {
       const id = req.params.id;
-      const bookFound = await book.findById(id);
+      const bookFound = await book.findById(id).populate('author');
 
       res.status(200).send(bookFound);
     } catch (erro) {

@@ -12,6 +12,7 @@ const bookSchema = new mongoose.Schema(
     publisher: { type: String },
     price: { type: Number },
     pages: { type: Number },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'authors', required: true }
   },
   // A opção "versionKey: false" evita que o mongoose adicione o campo "__v" (que é usado para versionamento interno) ao documento.
   { versionKey: false }
