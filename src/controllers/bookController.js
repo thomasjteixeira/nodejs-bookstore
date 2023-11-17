@@ -28,6 +28,30 @@ class BookController {
     }
   }
 
+  static async listBookBySearch(req, res) {
+    try {
+      const { title, publisher, minPages, maxPages, minPrice, maxPrice } = req.query;
+
+      const searchList = {};
+
+      if (title) searchList.title = { $regex: title, $options: 'i' };
+      if (publisher) searchList.publisher = { $regex: publisher, $options: 'i' };
+      
+      if (minPages) searchList.pages = { ...searchList.pages, $gte: minPages };
+      if (maxPages) searchList.pages = { ...searchList.pages, $lte: maxPages };
+      
+      if (minPrice) searchList.price = { ...searchList.price, $gte: minPrice };
+      if (maxPrice) searchList.price = { ...searchList.price, $lte: maxPrice };
+
+      const bookFound = await book.find(searchList).populate('author');
+
+      res.status(200).send(bookFound);
+    } catch (erro) {
+      res.status(500)
+        .json({ message: `${erro.message} - falha ao buscar os livros` });
+    }
+  }
+
   static async createBook(req, res) {
     try {
       const newBook = await book.create(req.body);
