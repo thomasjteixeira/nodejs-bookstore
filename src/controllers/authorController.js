@@ -1,15 +1,11 @@
-// Quando temos mais de um export no arquivo, precisamos usar a sintaxe abaixo
+import mongoose from "mongoose";
 import { author } from "../models/Author.js";
 
 class AuthorController {
   static async listAuthors(req, res) {
     try {
-      /* Utiliza o modelo "author" para buscar todos os Autores na coleção do banco de dados.
-      A função "find" do mongoose é usada com um objeto vazio como argumento,
-       o que significa que ela retornará todos os documentos da coleção.*/
       const authorsList = await author.find({});
 
-      // Envia uma resposta com o status HTTP 200 (OK) e o corpo da resposta contendo a lista de authores no formato JSON.
       res.status(200).send(authorsList);
     } catch (erro) {
       res.status(500)
@@ -22,10 +18,22 @@ class AuthorController {
       const id = req.params.id;
       const authorFound = await author.findById(id);
 
+      if (!authorFound) {
+        return res.status(404)
+          .send({ message: "Autor não encontrado" });
+      }
+
       res.status(200).send(authorFound);
     } catch (erro) {
-      res.status(500)
-        .json({ message: `${erro.message} - falha ao listar um Autor` });
+      if (erro instanceof mongoose.CastError) {
+        res.status(400)
+          .send({ message: "Id no formato inválido" });
+      } else {
+        res.status(500)
+          .json({ message: `${erro.message} - falha ao listar um Autor` });
+      }
+
+
     }
   }
 
