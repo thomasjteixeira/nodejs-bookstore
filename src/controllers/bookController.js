@@ -1,4 +1,5 @@
 import book from "../models/Book.js";
+import { author } from "../models/Author.js";
 
 class BookController {
   static async listBooks(req, res) {
@@ -30,22 +31,15 @@ class BookController {
 
   static async listBookBySearch(req, res) {
     try {
-      const { title, publisher, minPages, maxPages, minPrice, maxPrice } = req.query;
+      const searchList = await searchParameters(req.query);
 
-      const searchList = {};
+      if (searchList) {
+        const bookFound = await book.find(searchList).populate('author');
+        res.status(200).send(bookFound);
+      }else {
+        res.status(404).send({ message: "Autor não encontrado" });
+      }
 
-      if (title) searchList.title = { $regex: title, $options: 'i' };
-      if (publisher) searchList.publisher = { $regex: publisher, $options: 'i' };
-      
-      if (minPages) searchList.pages = { ...searchList.pages, $gte: minPages };
-      if (maxPages) searchList.pages = { ...searchList.pages, $lte: maxPages };
-      
-      if (minPrice) searchList.price = { ...searchList.price, $gte: minPrice };
-      if (maxPrice) searchList.price = { ...searchList.price, $lte: maxPrice };
-
-      const bookFound = await book.find(searchList).populate('author');
-
-      res.status(200).send(bookFound);
     } catch (erro) {
       res.status(500)
         .json({ message: `${erro.message} - falha ao buscar os livros` });
@@ -92,6 +86,34 @@ class BookController {
         .json({ message: `${erro.message} - falha ao deletar um livro` });
     }
   }
+}
+
+async function searchParameters(query) {
+  const { title, publisher, minPages, maxPages, minPrice, maxPrice, authorName } = query;
+
+  let searchList = {};
+
+  if (title) searchList.title = { $regex: title, $options: 'i' };
+  if (publisher) searchList.publisher = { $regex: publisher, $options: 'i' };
+
+  if (minPages) searchList.pages = { ...searchList.pages, $gte: minPages };
+  if (maxPages) searchList.pages = { ...searchList.pages, $lte: maxPages };
+
+  if (minPrice) searchList.price = { ...searchList.price, $gte: minPrice };
+  if (maxPrice) searchList.price = { ...searchList.price, $lte: maxPrice };
+
+  if (authorName) {
+    const authorFound = await author.findOne({ name: authorName })
+
+    if (authorFound) {
+      searchList.author = authorFound._id;
+    } else {
+      searchList = null;
+    }
+
+  }
+
+  return searchList;
 }
 
 export default BookController;
