@@ -33,16 +33,17 @@ class BookController {
     try {
       const searchList = await searchParameters(req.query);
 
-      const { limit = 5, page = 1 } = req.query;
+      const { limit = 5, page = 1, sortField = "_id", order = 1 } = req.query;
 
       if (searchList) {
         const bookFound = await book.find(searchList)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .populate('author');
-        
+          .sort({ [sortField]: order })
+          .skip((page - 1) * limit)
+          .limit(limit)
+          .populate('author');
+
         res.status(200).send(bookFound);
-      }else {
+      } else {
         res.status(404).send({ message: "Autor não encontrado" });
       }
 
