@@ -33,8 +33,14 @@ class BookController {
     try {
       const searchList = await searchParameters(req.query);
 
+      const { limit = 5, page = 1 } = req.query;
+
       if (searchList) {
-        const bookFound = await book.find(searchList).populate('author');
+        const bookFound = await book.find(searchList)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate('author');
+        
         res.status(200).send(bookFound);
       }else {
         res.status(404).send({ message: "Autor não encontrado" });
